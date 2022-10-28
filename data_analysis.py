@@ -7,7 +7,14 @@ import matplotlib.pyplot as plt
 
 
 class XRD:
-    def __init__(self, file_path, sample_name, smoothing_option = False, baseline_corr_option = False, peak_prominence  = 6000):
+    """
+    Creator: Moin
+    Contributors: Moin/
+    """
+    def __init__(self, file_path, sample_name,
+                 smoothing_option = False,
+                 baseline_corr_option = False,
+                 peak_prominence  = 6000):
         self.file_path = file_path
         self.sample_name = sample_name
         self.baseline_corr_option = baseline_corr_option
@@ -61,6 +68,10 @@ class XRD:
         peaks = self.find_peak_indices()
         return [self.intensity[peak] for peak in peaks[0]]
 
+    @staticmethod
+    def scaled_intensity_values(intensity):
+        return (intensity - np.min(intensity))/(np.max(intensity) - np.min(intensity))
+
     def simple_plot(self):
         axis_label_fontsize = 12.5
         fig = plt.figure(figsize=(1.2 * 6.8, 1.2 * 4.8), dpi=100)
@@ -91,4 +102,27 @@ class XRD:
                          horizontalalignment='center', verticalalignment='center',
                          fontsize=10, weight='bold')
         plt.grid(linestyle='--')
+        ax1.set_yticklabels([])
+        ax1.tick_params('y', left = False)
+        plt.show()
+
+    def plot_multiple_plots(self, *file_paths, **sample_names):
+        plot_color_list = ['red', 'black', 'cyan', 'green']
+        axis_label_fontsize = 12.5
+        fig = plt.figure(figsize=(1.2 * 6.8, 1.2 * 4.8), dpi=100)
+        ax1 = fig.add_subplot(1, 1, 1)  # ax1 is for the original plot
+        ax1.plot(self.theta_2, XRD.scaled_intensity_values(self.intensity), linewidth=3, label=self.sample_name)
+        ax1.set_xlabel(r'2$\theta$ [degrees]', fontsize=axis_label_fontsize, weight='bold')
+        ax1.set_ylabel('intensity [a.u.]', fontsize=axis_label_fontsize, weight='bold')
+        ax1.set_title(f'XRD of Various Samples', fontsize=15, weight='bold')
+        for num_fig, (data_path, plot_color, sample_name) in enumerate(zip(file_paths, plot_color_list, sample_names.values())):
+            x,y = XRD.load_csv_files(data_path)
+            y = XRD.scaled_intensity_values(y)
+            y = y + num_fig * 1.5 + 1.5
+            ax1.plot(x, y, plot_color, linewidth = 3, label = sample_name)
+        ax1.set_xlim(5,90)
+        plt.grid(linestyle='--')
+        ax1.set_yticklabels([])
+        ax1.tick_params('y', left=False)
+        ax1.legend()
         plt.show()
