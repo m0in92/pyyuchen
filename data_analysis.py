@@ -107,7 +107,7 @@ class XRD:
         plt.show()
 
     def plot_multiple_plots(self, *file_paths, **sample_names):
-        plot_color_list = ['red', 'black', 'cyan', 'green']
+        plot_color_list = ['red', 'black', 'cyan', 'green','orange']
         axis_label_fontsize = 12.5
         fig = plt.figure(figsize=(1.2 * 6.8, 1.2 * 4.8), dpi=100)
         ax1 = fig.add_subplot(1, 1, 1)  # ax1 is for the original plot
@@ -124,5 +124,5 @@ class XRD:
         plt.grid(linestyle='--')
         ax1.set_yticklabels([])
         ax1.tick_params('y', left=False)
-        ax1.legend()
+        ax1.legend(loc = 'upper right')
         plt.show()
